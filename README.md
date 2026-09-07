@@ -63,7 +63,7 @@ text
 
 ```text
 git clone https://github.com/luna0023/health_check.git
-cd price-aggregator
+cd health_check
 
 # 创建虚拟环境 (推荐)
 python -m venv venv
