@@ -4,7 +4,7 @@ import logging
 import threading
 import requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from config import REQUEST_TIMEOUT, SUPPLIER_URLS, MAX_WORKERS
+from config import REQUEST_TIMEOUT, SUPPLIERS, MAX_WORKERS
 
 # ---------- 优化点1：全局线程池（复用线程，避免每次请求创建/销毁）----------
 # 为什么这么写？线程创建开销大（约1ms/个），高并发下频繁创建会拖垮CPU。
@@ -35,17 +35,15 @@ def fetch_price(supplier_id, url, product_id):
     global _total_failures
     try:
         params = {'product_id': product_id}
-        # 超时时间从 config 读取
+        # 第一层超时，防止网络请求无限期等待
         response = requests.get(url, timeout=REQUEST_TIMEOUT, params=params)
         response.raise_for_status()
         data = response.json()
         price = data.get('price', float('inf'))
 
-        # 👇 关键优化：日志带上 product_id
         logging.info(f"✅ [商品{product_id}] 供应商{supplier_id} 返回价格: {price}")
         return price
     except Exception as e:
-        # 👇 关键优化：日志带上 product_id
         logging.warning(f"❌ [商品{product_id}] 供应商{supplier_id} 请求失败: {e}")
         with _fail_lock:
             _total_failures += 1
@@ -65,13 +63,13 @@ def get_best_price(product_id, total_timeout=2.5):
     start_time = time.perf_counter()  # 记录整个请求的开始时间
 
     # 提交任务（使用全局线程池）
+    # future_to_supplier = {FutureA: "supplier_0", FutureB: "supplier_1", FutureC: "supplier_2"}
     future_to_supplier = {
-        _executor.submit(fetch_price, idx, url, product_id): idx
-        for idx, url in enumerate(SUPPLIER_URLS)
+        _executor.submit(fetch_price, supplier_id, url, product_id): supplier_id
+        for supplier_id, url in SUPPLIERS.items()
     }
 
     prices = []
-    # as_completed 迭代等待任务完成，但我们要加上剩余超时时间
     for future in as_completed(future_to_supplier):
         supplier_id = future_to_supplier[future]
 
@@ -87,7 +85,8 @@ def get_best_price(product_id, total_timeout=2.5):
             continue
 
         try:
-            # ⚠️ 关键：给 result() 加 timeout，防止单个任务无限阻塞
+            # 第二层超时：
+            # 给 result() 加 timeout，防止单个任务无限阻塞
             # 如果这个供应商在 remaining_time 内没返回，抛出 TimeoutError
             price = future.result(timeout=remaining_time)
             if price == float('inf'):

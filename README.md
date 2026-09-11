@@ -23,37 +23,50 @@
 
 ## 🛠 技术栈
 
-| 类别       | 技术                                      |
-| :--------- | :---------------------------------------- |
-| 核心语言   | Python 3.9+                               |
-| Web 框架   | Flask                                     |
-| 并发处理   | ThreadPoolExecutor, as_completed          |
-| HTTP 请求  | Requests                                  |
-| 线程安全   | threading.Lock                            |
-| 日志监控   | Logging 模块 (控制台 + 文件输出)          |
-| 配置管理   | 环境变量 + config.py                      |
+| 类别      | 技术                               |
+|:--------|:---------------------------------|
+| 核心语言    | Python 3.6+                      |
+| Web 框架  | Flask                            |
+| 并发处理    | ThreadPoolExecutor, as_completed |
+| HTTP 请求 | Requests                         |
+| 线程安全    | threading.Lock                   |
+| 日志监控    | Logging 模块 (控制台 + 文件输出)          |
+| 配置管理    | 环境变量 + config.py                 |
 
 ---
 
 ## 📂 项目结构
 health_check/
-├── services/
-│ ├── init.py
-│ └── price_fetcher.py # 并发请求核心逻辑
-├── utils/
-│ ├── init.py
-│ └── decorators.py # @timer 装饰器
-├── data/
-│ └── prices.json # 供应商模拟价格数据
-├── logs/
-│ └── app.log # 运行时日志 (自动生成)
-├── app.py # Flask 主入口
-├── config.py # 配置文件 (URL、超时、线程数)
-├── supplier_mock.py # 供应商模拟服务 (本地测试用)
-├── requirements.txt # 项目依赖
-└── README.md
 
-text
+├── services/
+
+│ ├── init.py
+
+│ └── price_fetcher.py # 并发请求核心逻辑
+
+├── utils/
+
+│ ├── init.py
+
+│ └── decorators.py # @timer 装饰器
+
+├── data/
+
+│ └── prices.json # 供应商模拟价格数据
+
+├── logs/
+
+│ └── app.log # 运行时日志 (自动生成)
+
+├── app.py # Flask 主入口
+
+├── config.py # 配置文件 (URL、超时、线程数)
+
+├── supplier_mock.py # 供应商模拟服务 (本地测试用)
+
+├── requirements.txt # 项目依赖
+
+└── README.md
 
 ---
 
