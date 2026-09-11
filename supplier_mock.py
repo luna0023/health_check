@@ -23,7 +23,6 @@ def load_prices():
         return {}
     try:
         with open(DATA_FILE, 'r', encoding='utf-8') as f:
-            # json.load(f)什么意思来着？
             return json.load(f)
     except json.JSONDecodeError:
         print(f"⚠️ 警告: {DATA_FILE} 格式错误，使用空数据")
@@ -60,7 +59,7 @@ def get_price(supplier_id):
     if product_id not in supplier_data:
         print(f"⚠️ 供应商 {supplier_id} 没有商品 {product_id} 的数据")
         logging.warning(f"⚠️ 供应商 {supplier_id} 没有商品 {product_id} 的数据")
-        return jsonify({"price": 9999.0}), 200
+        return jsonify({"error": f"供应商 {supplier_id} 无商品 {product_id} 的报价"}), 404
 
     price = supplier_data[product_id]
     print(f"✅ 供应商 {supplier_id} 为商品 {product_id} 报价: {price}")
@@ -69,4 +68,4 @@ def get_price(supplier_id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5002)
+    app.run(debug=True, host='0.0.0.0', port=5001)

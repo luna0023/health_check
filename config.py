@@ -10,14 +10,11 @@ REQUEST_TIMEOUT = 1.5
 
 MAX_WORKERS = 3
 
-SUPPLIER_URLS = [
-    # "http://httpbin.org/delay/1",
-    # "http://httpbin.org/delay/2",
-    # "http://httpbin.org/status/500",
-    "http://127.0.0.1:5001/supplier/0",
-    "http://127.0.0.1:5001/supplier/1",
-    "http://127.0.0.1:5001/supplier/2",
-]
+SUPPLIERS = {
+    "supplier_0": "http://127.0.0.1:5001/supplier/0",
+    "supplier_1": "http://127.0.0.1:5001/supplier/1",
+    "supplier_2": "http://127.0.0.1:5001/supplier/2",
+}
 
 LOG_FILE = os.path.join(os.path.dirname(__file__), "logs", "app.log")
 

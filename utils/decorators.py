@@ -11,7 +11,6 @@ from functools import wraps
 
 
 def timer(func):
-    # 看不懂这里？
     @wraps(func)
     def wrapper(*args, **kwargs):
         # perf_counter是干嘛的？

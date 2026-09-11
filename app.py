@@ -8,9 +8,7 @@ from utils.decorators import timer
 from services.price_fetcher import get_best_price, get_failure_count, shutdown_executor
 from config import LOG_FILE
 
-# ---------- 注册退出回调（企业级必备）----------
-# 为什么？当 Flask 进程被 Ctrl+C 或系统 kill 时，确保线程池、数据库连接等资源被释放。
-# 如果不注册，可能会在日志里看到“线程池未关闭”的警告。
+
 atexit.register(shutdown_executor)
 
 app = Flask(__name__)
@@ -61,6 +59,11 @@ def get_best_price_api():
 def health():
     return jsonify({"status": "ok"})
 
+
+# print("\n===== 已注册的路由 =====")
+# for rule in app.url_map.iter_rules():
+#     print(rule)
+# print("========================\n")
 
 if __name__ == '__main__':
     # 注意：debug=True 会启动子进程，atexit 可能在子进程中执行两次，但影响不大
